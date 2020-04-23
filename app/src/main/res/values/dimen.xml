@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="fibonacci_item_view_vertical_padding">4dp</dimen>
+    <dimen name="fibonacci_number_margin_start">10dp</dimen>
+</resources>

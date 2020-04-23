@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">FibonachiTest</string>
+    <string name="STR_ENTER_POSITION_HERE">Enter position here</string>
+</resources>
