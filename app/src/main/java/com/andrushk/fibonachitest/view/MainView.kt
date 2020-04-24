@@ -7,7 +7,6 @@ import java.math.BigInteger
 
 @StateStrategyType(OneExecutionStateStrategy::class)
 interface MainView : MvpView {
-    fun updateAll(newList: List<BigInteger>)
-    fun addToList(newPartOfFibonacci: List<BigInteger>)
+    fun updateList(newList: List<Pair<Int, BigInteger>>, scrollToPosition: Int? = null)
     fun showItemAtPosition(position: Int)
 }

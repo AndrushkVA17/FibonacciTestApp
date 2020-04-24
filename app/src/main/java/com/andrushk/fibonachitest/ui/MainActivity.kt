@@ -26,8 +26,6 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var fibonacciRVAdapter: FibonacciRVAdapter
 
-    private var isLoading = true
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -54,7 +52,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
             .debounce(SEARCH_FIELD_DEBOUNCE, TimeUnit.MILLISECONDS)
             .map { it.text.toString() }
             .subscribe { strItem ->
-                if (strItem.isNotEmpty()) presenter.searchItem(strItem.toInt())
+                if (strItem.isNotEmpty()) presenter.searchItem(strItem.toInt(), layoutManager.childCount)
             }
     }
 
@@ -69,23 +67,22 @@ class MainActivity : MvpAppCompatActivity(), MainView {
             totalItemCount = layoutManager.itemCount
             firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
-            if (!isLoading &&
-                (visibleItemCount + firstVisibleItemPosition) >= totalItemCount &&
-                firstVisibleItemPosition >= 0) {
-                isLoading = true
-                presenter.getNextItems()
+            if (dy < 0) {
+                if (firstVisibleItemPosition == 0) {
+                    presenter.getPreviousItems(firstVisibleItemPosition + visibleItemCount)
+                }
+            } else {
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
+                    presenter.getNextItems(firstVisibleItemPosition)
+                }
             }
         }
     }
 
-    override fun updateAll(newList: List<BigInteger>) {
-        isLoading = false
-        fibonacciRVAdapter.updateAll(newList)
-    }
-
-    override fun addToList(newPartOfFibonacci: List<BigInteger>) {
-        isLoading = false
-        fibonacciRVAdapter.addToList(newPartOfFibonacci)
+    override fun updateList(newList: List<Pair<Int, BigInteger>>, scrollToPosition: Int?) {
+        fibonacciRVAdapter.submitList(ArrayList(newList)) {
+            scrollToPosition?.let { showItemAtPosition(it) }
+        }
     }
 
     override fun showItemAtPosition(position: Int) {
